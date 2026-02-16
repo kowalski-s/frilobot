@@ -1,0 +1,14 @@
+# Telegram
+aiogram==3.15.0
+
+# БД (MVP — Supabase)
+supabase==2.11.0
+
+# Планировщик задач
+APScheduler==3.10.4
+
+# HTTP-запросы и парсинг (aiohttp ставится как зависимость aiogram)
+beautifulsoup4==4.12.3
+
+# Конфигурация
+python-dotenv==1.0.1
