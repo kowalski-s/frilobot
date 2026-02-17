@@ -8,6 +8,9 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
 from bot.config import settings
+from bot.handlers import register_all_handlers
+from bot.middlewares.auth import AuthMiddleware
+from bot.middlewares.throttling import ThrottlingMiddleware
 
 logging.basicConfig(
     level=logging.INFO,
@@ -22,6 +25,13 @@ async def main() -> None:
         default=DefaultBotProperties(parse_mode=ParseMode.HTML),
     )
     dp = Dispatcher()
+
+    # Мидлвари (порядок важен: throttling → auth)
+    dp.update.middleware(ThrottlingMiddleware())
+    dp.update.middleware(AuthMiddleware())
+
+    # Хендлеры
+    register_all_handlers(dp)
 
     logger.info("Бот запускается...")
     try:

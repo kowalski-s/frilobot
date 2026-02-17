@@ -6,16 +6,26 @@ Frilo — Telegram-бот (SaaS, мультитенант) для фриланс
 
 ## Статус
 
-Этап 1 — Фундамент. Фаза 1 (структура и окружение) завершена. Следующий шаг — Фаза 2 (база данных).
+Этап 1 — Фундамент. Фаза 4 завершена. Переход к Фазе 5.
 
 ### Что сделано
-- Фаза 1.1: pyproject.toml, requirements.txt, .env.example, .gitignore
-- Фаза 1.2: 16 пакетов с __init__.py (bot/, services/, db/, llm/, parsers/, scheduler/, userbot/, utils/)
-- Фаза 1.3: bot/config.py — dataclass Settings, загрузка из .env, валидация
-- Фаза 1.4: bot/__main__.py — точка входа, aiogram Bot + Dispatcher + polling
+- Фаза 1: структура проекта, конфиг, точка входа
+- Фаза 2.1: db/connection.py — singleton-клиент Supabase
+- Фаза 2.2–2.5: SQL-миграции применены в Supabase через MCP — 10 таблиц
+- Фаза 2.6–2.12: все 7 репозиториев (users, settings, channels, messages, broadcasts, vacancies, search_profiles) — проверены на живой БД
+- Фаза 3.1: bot/middlewares/auth.py — AuthMiddleware (авторегистрация, data["user"])
+- Фаза 3.2: bot/middlewares/throttling.py — ThrottlingMiddleware (1 msg/sec)
+- Фаза 3.3: bot/filters/admin.py — IsAdmin (фильтр по ADMIN_IDS и is_admin)
+- Фаза 3.4: bot/callbacks/pagination.py — MenuCallback, PageCallback
+- Фаза 3.5: bot/keyboards/menu.py — клавиатура главного меню (6 кнопок)
+- Фаза 3.6: bot/handlers/start.py, menu.py, __init__.py — /start, меню с заглушками, подключение мидлварей в __main__.py
+- Фаза 3.7: bot/states/onboarding.py, bot/keyboards/onboarding.py — FSM (7 состояний), клавиатуры (мультивыбор, бюджет, формат, дисклеймер)
+- Фаза 3.8: bot/handlers/start.py — полный онбординг 7 шагов с сохранением в users + search_profiles
+- Фаза 4.1: bot/keyboards/profile.py — ProfileCallback, клавиатуры профиля (3 кнопки редактирования + возврат)
+- Фаза 4.2: bot/states/profile.py — ProfileEditState (6 состояний), bot/handlers/profile.py — просмотр профиля, редактирование специализаций/описания/параметров поиска через FSM
 
 ### Что дальше
-- Фаза 2: подключение к Supabase, SQL-миграции (10 таблиц), репозитории (CRUD)
+- Фаза 5: модуль «Настройки» (просмотр и изменение лимитов рассылки, тихих часов)
 
 ## Технический стек
 
