@@ -32,6 +32,27 @@ class ChannelRepository:
         response = self._channels.insert(data).execute()
         return response.data[0]
 
+    def get_or_create_by_username(self, username: str, **kwargs) -> dict:
+        """Возвращает канал по username или создаёт новый."""
+        existing = self.get_by_username(username)
+        if existing:
+            return existing
+        data: dict = {"username": username, "source": "tgstat"}
+        data.update(kwargs)
+        response = self._channels.insert(data).execute()
+        return response.data[0]
+
+    def get_user_channel(self, user_id: str, channel_id: str) -> dict | None:
+        """Возвращает связь пользователя с каналом."""
+        response = (
+            self._user_channels.select("*")
+            .eq("user_id", user_id)
+            .eq("channel_id", channel_id)
+            .limit(1)
+            .execute()
+        )
+        return response.data[0] if response.data else None
+
     def get_by_username(self, username: str) -> dict | None:
         """Находит канал по username."""
         response = (

@@ -634,72 +634,36 @@ print(len(kb.inline_keyboard))  # кнопки специализаций
 
 ---
 
-## Фаза 6 — Модуль «Радар»
+## ~~Фаза 6 — Модуль «Радар»~~ ✅
 
-### Задача 6.1: Парсер tgstat.ru
+### ~~Задача 6.1: Парсер каналов~~ ✅
 
 **Файлы:**
 - `parsers/tgstat.py` — класс `TgstatParser`:
-  - `search(query: str, limit: int = 20) -> list[dict]` — поиск каналов, возвращает list с полями: username, title, description, subscribers_count, category
-  - Использует aiohttp + BeautifulSoup4
-  - Обработка ошибок: timeout, 403, изменение вёрстки → пустой список + лог
-
-**Результат:** можно искать каналы по ключевому слову и получать структурированный результат.
-
-**Проверка:**
-```bash
-python -c "
-import asyncio
-from parsers.tgstat import TgstatParser
-parser = TgstatParser()
-results = asyncio.run(parser.search('python разработка'))
-for r in results[:3]:
-    print(r['username'], r['subscribers_count'])
-"
-```
+  - DuckDuckGo `site:t.me` как основной источник (через библиотеку `ddgs`)
+  - tgstat.com AJAX API как резервный источник (через `cloudscraper`)
+  - Возвращает: `[{username, title, description, subscribers_count, category}, ...]`
 
 ---
 
-### Задача 6.2: Сервис радара
+### ~~Задача 6.2: Сервис радара~~ ✅
 
 **Файлы:**
 - `services/radar.py` — класс `RadarService`:
-  - `search_channels(query: str) -> list[dict]` — ищет через TgstatParser, для каждого результата вызывает `ChannelRepository.get_or_create()`, возвращает список каналов из БД
-  - `add_channel_by_username(username: str) -> dict | None` — ручное добавление канала
-
-**Результат:** поиск каналов с автоматическим сохранением в БД.
-
-**Проверка:**
-```bash
-python -c "
-import asyncio
-from services.radar import RadarService
-svc = RadarService()
-channels = asyncio.run(svc.search_channels('дизайн'))
-print('Found:', len(channels))
-# В Supabase: таблица channels пополнилась
-"
-```
+  - К запросу автоматически добавляются контекстные слова: «вакансии фриланс работа заказы»
+  - Результаты фильтруются по маркерам релевантности (без LLM): вакансии, работа, фриланс, ищем, заказ и т.д.
+  - `search_channels()`, `link_channel()`, `unlink_channel()`, `update_channel_purpose()`
+- `db/repositories/channels.py` — добавлены `get_or_create_by_username()`, `get_user_channel()`
 
 ---
 
-### Задача 6.3: Клавиатуры и хендлер радара
+### ~~Задача 6.3: Клавиатуры и хендлер радара~~ ✅
 
 **Файлы:**
-- `bot/keyboards/radar.py` — клавиатуры для радара (поиск, карточки каналов, управление)
-- `bot/handlers/radar.py`:
-  - Экран: список подключённых каналов
-  - Кнопка «Найти новые» → ввод запроса → результаты с пагинацией
-  - Карточка канала: кнопки «Рассылка» / «Вакансии» / «Оба» / «Пропустить»
-  - Управление: изменить назначение, отключить
-
-**Результат:** пользователь ищет каналы, подключает их с нужным назначением, управляет списком.
-
-**Проверка:**
-- «Радар» → «Найти новые каналы» → ввести «python» → список каналов
-- Нажать «Рассылка» на канале → «Канал подключён для рассылки»
-- В Supabase: `user_channels` — новая запись с purpose='broadcast'
-- «Радар» → видит подключённый канал в списке
+- `bot/keyboards/radar.py` — клавиатуры: меню (Поиск по профилю / Свой запрос / Мои каналы), карточка канала, список с пагинацией, управление
+- `bot/states/radar.py` — `RadarState` (searching, browsing_results)
+- `bot/handlers/radar.py` — полный хендлер: «Поиск по профилю» (ключевые слова из search_profiles), «Свой запрос», карточки, подключение, список каналов, управление назначением, отключение
+- `bot/handlers/__init__.py` — подключён `radar_router` перед `menu_router`
 
 ---
 

@@ -9,6 +9,8 @@ APScheduler==3.10.4
 
 # HTTP-запросы и парсинг (aiohttp ставится как зависимость aiogram)
 beautifulsoup4==4.12.3
+cloudscraper==1.2.71
+ddgs==7.5.3
 
 # Конфигурация
 python-dotenv==1.0.1
