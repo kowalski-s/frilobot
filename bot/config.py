@@ -30,8 +30,9 @@ class Settings:
     supabase_key: str
 
     # LLM
+    llm_base_url: str = "https://api.openai.com/v1"
     llm_api_key: str = ""
-    llm_model: str = ""
+    llm_model: str = "gpt-4o-mini"
 
     # Рассылка (дефолты)
     default_broadcast_limit: int = 5
@@ -55,8 +56,9 @@ def _load_settings() -> Settings:
         admin_ids=_parse_admin_ids(getenv("ADMIN_IDS", "")),
         supabase_url=supabase_url,
         supabase_key=supabase_key,
+        llm_base_url=getenv("LLM_BASE_URL", "https://api.openai.com/v1"),
         llm_api_key=getenv("LLM_API_KEY", ""),
-        llm_model=getenv("LLM_MODEL", ""),
+        llm_model=getenv("LLM_MODEL", "gpt-4o-mini"),
         default_broadcast_limit=int(getenv("DEFAULT_BROADCAST_LIMIT", "5")),
         default_min_delay=int(getenv("DEFAULT_MIN_DELAY", "30")),
         default_max_delay=int(getenv("DEFAULT_MAX_DELAY", "120")),

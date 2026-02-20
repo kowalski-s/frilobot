@@ -20,6 +20,19 @@ class UserRepository:
         )
         return response.data[0] if response.data else None
 
+    def get_by_telegram_id_or_id(self, identifier: str | int) -> dict | None:
+        """Находит пользователя по UUID (id) или telegram_id."""
+        if isinstance(identifier, int):
+            return self.get_by_telegram_id(identifier)
+        # UUID — ищем по id
+        response = (
+            self._table.select("*")
+            .eq("id", identifier)
+            .limit(1)
+            .execute()
+        )
+        return response.data[0] if response.data else None
+
     def create(self, telegram_id: int, username: str | None = None, first_name: str | None = None) -> dict:
         """Создаёт нового пользователя."""
         data: dict = {"telegram_id": telegram_id}

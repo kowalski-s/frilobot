@@ -6,7 +6,7 @@ Frilo — Telegram-бот (SaaS, мультитенант) для фриланс
 
 ## Статус
 
-Этап 1 — Фундамент. Фаза 6 завершена. Переход к Этапу 2.
+Этап 2 — Составить текст. Фазы 7-8 переработаны (чат-формат). Переход к Фазе 9.
 
 ### Что сделано
 - Фаза 1: структура проекта, конфиг, точка входа
@@ -28,9 +28,17 @@ Frilo — Telegram-бот (SaaS, мультитенант) для фриланс
 - Фаза 6.2: services/radar.py — RadarService (контекстные запросы + keyword-фильтр релевантности без LLM)
 - Фаза 6.3: bot/states/radar.py — RadarState (2 состояния), bot/keyboards/radar.py — клавиатуры радара (Поиск по профилю / Свой запрос, карточки, пагинация, управление)
 - Фаза 6.4: bot/handlers/radar.py — «Поиск по профилю» (авто ключевые слова из search_profiles), «Свой запрос», карточки → подключение, список каналов, управление, отключение. db/repositories/channels.py — get_or_create_by_username, get_user_channel
+- Фаза 7.1: llm/client.py — LLMClient (OpenAI-совместимый, NeuroAPI), generate/generate_chat/generate_variants/generate_json, singleton get_llm_client(). Обновлён config.py (LLM_BASE_URL), requirements.txt (openai)
+- Фаза 7.2: llm/prompts/broadcast_message.py — чат-формат: build_system_prompt(length) + build_context_message(profile), длины short/medium/long
+- Фаза 7.3: llm/prompts/vacancy_response.py — чат-формат: build_system_prompt() + build_context_message(profile)
+- Фаза 7.4: llm/prompts/vacancy_classify.py — промпт классификации вакансии (JSON-ответ: is_vacancy, title, budget, skills, relevance_score)
+- Фаза 7.5: llm/prompts/rewrite.py — промпт уникализации текста (рерайт с сохранением смысла, адаптация под канал)
+- Фаза 8.1: services/composer.py — ComposerService: чат-режим (generate_broadcast, generate_broadcast_from_profile, generate_vacancy_response, init_vacancy_chat, refine, save_as_template, get_templates, delete_template)
+- Фаза 8.2: bot/states/compose.py — ComposeState (collecting_broadcast_info, collecting_vacancy_info, refining), bot/keyboards/compose.py — клавиатуры (меню, панели до/после генерации, кнопки длины/доработки, шаблоны с пагинацией)
+- Фаза 8.3: bot/handlers/compose.py — чат-формат: рассылка (сбор инфо текстом / по профилю → генерация → доработка кнопками и текстом), отклик (вакансия + доп. инфо → генерация → доработка), шаблоны (просмотр, удаление, пагинация)
 
 ### Что дальше
-- Этап 2: модуль «Составить текст» (LLM-интеграция, генерация сообщений)
+- Фаза 9: модуль «Найти заказы» (regex-фильтр, парсинг каналов, фильтрация вакансий, хендлер)
 
 ## Технический стек
 
@@ -39,7 +47,7 @@ Frilo — Telegram-бот (SaaS, мультитенант) для фриланс
 | Язык | Python 3.11+ | — |
 | Telegram Bot | aiogram 3 | — |
 | Userbot | — (не на MVP) | Telethon |
-| LLM | Определим позже | — |
+| LLM | gpt-4o-mini через NeuroAPI (openai SDK) | — |
 | БД | Supabase Cloud (supabase-py) | PostgreSQL на VPS (asyncpg) |
 | Планировщик | APScheduler (asyncio) | Celery + Redis (если нужно) |
 | HTTP-клиент | aiohttp | — |

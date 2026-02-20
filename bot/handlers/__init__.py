@@ -2,6 +2,7 @@
 
 from aiogram import Dispatcher
 
+from bot.handlers.compose import router as compose_router
 from bot.handlers.menu import router as menu_router
 from bot.handlers.profile import router as profile_router
 from bot.handlers.radar import router as radar_router
@@ -15,4 +16,5 @@ def register_all_handlers(dp: Dispatcher) -> None:
     dp.include_router(profile_router)
     dp.include_router(settings_router)
     dp.include_router(radar_router)
+    dp.include_router(compose_router)
     dp.include_router(menu_router)

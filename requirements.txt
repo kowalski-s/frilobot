@@ -12,5 +12,8 @@ beautifulsoup4==4.12.3
 cloudscraper==1.2.71
 ddgs==7.5.3
 
+# LLM (OpenAI-совместимый API)
+openai==1.58.1
+
 # Конфигурация
 python-dotenv==1.0.1

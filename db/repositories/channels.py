@@ -53,6 +53,16 @@ class ChannelRepository:
         )
         return response.data[0] if response.data else None
 
+    def get_by_id(self, channel_id: str) -> dict | None:
+        """Находит канал по id."""
+        response = (
+            self._channels.select("*")
+            .eq("id", channel_id)
+            .limit(1)
+            .execute()
+        )
+        return response.data[0] if response.data else None
+
     def get_by_username(self, username: str) -> dict | None:
         """Находит канал по username."""
         response = (
